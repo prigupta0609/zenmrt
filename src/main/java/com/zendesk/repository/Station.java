@@ -1,4 +1,4 @@
-package com.zendesk.model;
+package com.zendesk.repository;
 
 import java.util.Date;
 import java.util.List;
@@ -25,5 +25,14 @@ public class Station {
 
     public Date getStartDate() {
         return startDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Station{" +
+                "name='" + name + '\'' +
+                ", code=" + code +
+                ", startDate=" + startDate +
+                '}';
     }
 }

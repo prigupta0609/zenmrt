@@ -3,7 +3,6 @@ package com.zendesk.routesearch;
 import com.zendesk.model.Node;
 import com.zendesk.model.Station;
 import com.zendesk.model.StationCode;
-import com.zendesk.model.Vertex;
 import com.zendesk.repository.RouteRepository;
 import org.joda.time.LocalDateTime;
 import org.junit.Assert;
@@ -29,14 +28,14 @@ public class RouteGraphTest {
     public void testGraphWithIntermediateDate() {
         List<Station> stations = stubStationList();
         Mockito.when(repository.getStationList()).thenReturn(stations);
-        Map<String, Vertex> graph = routeGraph.getGraphWithExistingStations(new LocalDateTime(1998, 01, 01, 0, 0, 0));
+        Map<Station, Set<Node>> graph = routeGraph.getGraphWithExistingStations(new LocalDateTime(1998, 01, 01, 0, 0, 0));
         Map<String, List<String>> expectedGraph = new HashMap<>();
-        expectedGraph.put("P", new ArrayList<>(Arrays.asList("O")));
-        expectedGraph.put("G", new ArrayList<>(Arrays.asList("B")));
-        expectedGraph.put("I", new ArrayList<>(Arrays.asList("J","B")));
-        expectedGraph.put("J", new ArrayList<>(Arrays.asList("I","O")));
-        expectedGraph.put("O", new ArrayList<>(Arrays.asList("J","P")));
-        expectedGraph.put("B", new ArrayList<>(Arrays.asList("G","I")));
+        expectedGraph.put("CC8", new ArrayList<>(Arrays.asList("CC7")));
+        expectedGraph.put("CC1", new ArrayList<>(Arrays.asList("CC3")));
+        expectedGraph.put("CC4", new ArrayList<>(Arrays.asList("CC5","CC3")));
+        expectedGraph.put("CC5", new ArrayList<>(Arrays.asList("CC4","CC7")));
+        expectedGraph.put("CC7", new ArrayList<>(Arrays.asList("CC5","CC8")));
+        expectedGraph.put("CC3", new ArrayList<>(Arrays.asList("CC1","CC4")));
         assertGraph(graph, expectedGraph);
     }
 
@@ -44,18 +43,19 @@ public class RouteGraphTest {
     public void testGraphWithIntermediateDate_IncludingJunction() {
         List<Station> stations = stubStationList();
         Mockito.when(repository.getStationList()).thenReturn(stations);
-        Map<String, Vertex> graph = routeGraph.getGraphWithExistingStations(new LocalDateTime(2000, 02, 01, 0, 0, 0));
+        Map<Station, Set<Node>> graph = routeGraph.getGraphWithExistingStations(new LocalDateTime(2000, 02, 01, 0, 0, 0));
         Map<String, List<String>> expectedGraph = new HashMap<>();
-        expectedGraph.put("P", new ArrayList<>(Arrays.asList("O")));
-        expectedGraph.put("A", new ArrayList<>(Arrays.asList("B")));
-        expectedGraph.put("B", new ArrayList<>(Arrays.asList("A","E","I","H")));
-        expectedGraph.put("E", new ArrayList<>(Arrays.asList("B","F")));
-        expectedGraph.put("F", new ArrayList<>(Arrays.asList("E")));
-        expectedGraph.put("G", new ArrayList<>(Arrays.asList("H")));
-        expectedGraph.put("H", new ArrayList<>(Arrays.asList("B","G")));
-        expectedGraph.put("I", new ArrayList<>(Arrays.asList("B","J")));
-        expectedGraph.put("J", new ArrayList<>(Arrays.asList("I","O")));
-        expectedGraph.put("O", new ArrayList<>(Arrays.asList("J","P")));
+        expectedGraph.put("CC8", new ArrayList<>(Arrays.asList("CC7")));
+        expectedGraph.put("NS1", new ArrayList<>(Arrays.asList("NS2")));
+        expectedGraph.put("NS2", new ArrayList<>(Arrays.asList("NS1","NS5","CC3")));
+        expectedGraph.put("CC3", new ArrayList<>(Arrays.asList("CC4","CC2","NS2")));
+        expectedGraph.put("NS5", new ArrayList<>(Arrays.asList("NS2","NS6")));
+        expectedGraph.put("NS6", new ArrayList<>(Arrays.asList("NS5")));
+        expectedGraph.put("CC1", new ArrayList<>(Arrays.asList("CC2")));
+        expectedGraph.put("CC2", new ArrayList<>(Arrays.asList("CC3","CC1")));
+        expectedGraph.put("CC4", new ArrayList<>(Arrays.asList("CC3","CC5")));
+        expectedGraph.put("CC5", new ArrayList<>(Arrays.asList("CC4","CC7")));
+        expectedGraph.put("CC7", new ArrayList<>(Arrays.asList("CC5","CC8")));
         assertGraph(graph, expectedGraph);
     }
 
@@ -63,7 +63,7 @@ public class RouteGraphTest {
     public void testGraphBeforeMRTSystemStarted() {
         List<Station> stations = stubStationList();
         Mockito.when(repository.getStationList()).thenReturn(stations);
-        Map<String, Vertex> graph = routeGraph.getGraphWithExistingStations(new LocalDateTime(1980, 02, 01, 0, 0, 0));
+        Map<Station, Set<Node>> graph = routeGraph.getGraphWithExistingStations(new LocalDateTime(1980, 02, 01, 0, 0, 0));
         Assert.assertTrue(graph.isEmpty());
     }
 
@@ -71,41 +71,63 @@ public class RouteGraphTest {
     public void testGraphAfterWholeEstablishment() {
         List<Station> stations = stubStationList();
         Mockito.when(repository.getStationList()).thenReturn(stations);
-        Map<String, Vertex> graph = routeGraph.getGraphWithExistingStations(new LocalDateTime(2030, 02, 01, 0, 0, 0));
+        Map<Station, Set<Node>> graph = routeGraph.getGraphWithExistingStations(new LocalDateTime(2030, 02, 01, 0, 0, 0));
         Map<String, List<String>> expectedGraph = new HashMap<>();
-        expectedGraph.put("A", new ArrayList<>(Arrays.asList("B")));
-        expectedGraph.put("B", new ArrayList<>(Arrays.asList("A","C","I","H")));
-        expectedGraph.put("C", new ArrayList<>(Arrays.asList("B","D")));
-        expectedGraph.put("D", new ArrayList<>(Arrays.asList("C","E","L","M")));
-        expectedGraph.put("E", new ArrayList<>(Arrays.asList("D","F")));
-        expectedGraph.put("F", new ArrayList<>(Arrays.asList("E")));
-        expectedGraph.put("G", new ArrayList<>(Arrays.asList("H")));
-        expectedGraph.put("H", new ArrayList<>(Arrays.asList("B","G")));
-        expectedGraph.put("I", new ArrayList<>(Arrays.asList("B","J")));
-        expectedGraph.put("J", new ArrayList<>(Arrays.asList("I","N")));
-        expectedGraph.put("N", new ArrayList<>(Arrays.asList("J","O","M")));
-        expectedGraph.put("O", new ArrayList<>(Arrays.asList("N","P")));
-        expectedGraph.put("P", new ArrayList<>(Arrays.asList("O")));
-        expectedGraph.put("K", new ArrayList<>(Arrays.asList("L")));
-        expectedGraph.put("L", new ArrayList<>(Arrays.asList("D","K")));
-        expectedGraph.put("M", new ArrayList<>(Arrays.asList("D","N")));
+        expectedGraph.put("NS1", new ArrayList<>(Arrays.asList("NS2")));
+        expectedGraph.put("NS2", new ArrayList<>(Arrays.asList("NS1","NS3","CC3")));
+        expectedGraph.put("NS3", new ArrayList<>(Arrays.asList("NS2","NS4")));
+        expectedGraph.put("NS4", new ArrayList<>(Arrays.asList("NS3","NS5","EW3")));
+        expectedGraph.put("NS5", new ArrayList<>(Arrays.asList("NS4","NS6")));
+        expectedGraph.put("NS6", new ArrayList<>(Arrays.asList("NS5")));
+        expectedGraph.put("CC1", new ArrayList<>(Arrays.asList("CC2")));
+        expectedGraph.put("CC2", new ArrayList<>(Arrays.asList("CC3","CC1")));
+        expectedGraph.put("CC3", new ArrayList<>(Arrays.asList("CC4","CC2","NS2")));
+        expectedGraph.put("CC4", new ArrayList<>(Arrays.asList("CC3","CC5")));
+        expectedGraph.put("CC5", new ArrayList<>(Arrays.asList("CC4","CC6")));
+        expectedGraph.put("CC6", new ArrayList<>(Arrays.asList("CC5","CC7","EW5")));
+        expectedGraph.put("CC7", new ArrayList<>(Arrays.asList("CC6","CC8")));
+        expectedGraph.put("CC8", new ArrayList<>(Arrays.asList("CC7")));
+        expectedGraph.put("EW1", new ArrayList<>(Arrays.asList("EW2")));
+        expectedGraph.put("EW2", new ArrayList<>(Arrays.asList("EW3","EW1")));
+        expectedGraph.put("EW3", new ArrayList<>(Arrays.asList("EW2","EW4","NS4")));
+        expectedGraph.put("EW4", new ArrayList<>(Arrays.asList("EW3","EW5")));
+        expectedGraph.put("EW5", new ArrayList<>(Arrays.asList("EW4","CC6")));
         assertGraph(graph, expectedGraph);
     }
 
-    private void assertGraph(Map<String, Vertex> graph, Map<String, List<String>> expectedGraph) {
-        Assert.assertEquals(expectedGraph.size(), graph.size());
-        Assert.assertEquals(expectedGraph.keySet(), graph.keySet());
-        for (String station : expectedGraph.keySet()) {
-            Assert.assertTrue(expectedGraph.get(station).containsAll(getNeighborStationNames(graph.get(station))));
+    private void assertGraph(Map<Station, Set<Node>> graph, Map<String, List<String>> expectedGraph) {
+        Assert.assertEquals("Graph size don't match", expectedGraph.size(), graph.size());
+        Assert.assertEquals("Station Codes don't match", expectedGraph.keySet(), getStationCodes(graph));
+        for (String stationCode : expectedGraph.keySet()) {
+            Assert.assertTrue("Neighboring stations don't match for " + stationCode, expectedGraph.get(stationCode)
+                    .containsAll(getNeighborStationCodes(graph, stationCode)));
         }
     }
 
-    private List<String> getNeighborStationNames(Vertex station) {
-        List<String> stationNames = new ArrayList<>();
-        for (Node node : station.getNeighbors()) {
-            stationNames.add(node.getStation().getName());
+    private Set<String> getStationCodes(Map<Station, Set<Node>> graph) {
+        Set<String> stations = new HashSet<>();
+        for (Station station : graph.keySet()) {
+            stations.add(station.getCode().getCode());
         }
-        return stationNames;
+        return stations;
+    }
+
+    private List<String> getNeighborStationCodes(Map<Station, Set<Node>> graph, String stationCode) {
+        List<String> stationCodes = new ArrayList<>();
+        Station s = getStation(graph, stationCode);
+        for (Node node : graph.get(s)) {
+            stationCodes.add(node.getStation().getCode().getCode());
+        }
+        return stationCodes;
+    }
+
+    private Station getStation(Map<Station, Set<Node>> graph, String stationCode) {
+        Set<Station> keySet = graph.keySet();
+        for (Station s : keySet) {
+            if (s.getCode().getCode().equalsIgnoreCase(stationCode))
+                return s;
+        }
+        return null;
     }
 
     private List<Station> stubStationList() {

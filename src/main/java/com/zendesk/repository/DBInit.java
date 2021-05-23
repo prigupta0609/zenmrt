@@ -26,6 +26,14 @@ public class DBInit {
     @Autowired
     private RouteRepository routeRepository;
 
+    /**
+     * Read CSV file during startup and load data in RouteRepository
+     * Each row in CSV file gives info of station.
+     * Format of CSV:
+     *      StationCode,StationName,dd/MM/yyyy
+     * For example:
+     *      DT35,Expo,21/10/2017
+     */
     @PostConstruct
     private void populateRepo() {
         logger.info("Starting data loading");
@@ -53,10 +61,17 @@ public class DBInit {
             csvReader.close();
             return stationList;
         } catch (Exception e) {
+            // If there is any error while loading data, throw RunTimeException
+            // in order to interrupt service from starting
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Format date string to LocalDateTime
+     * @param dateString
+     * @return
+     */
     private LocalDateTime getDate(String dateString) {
         try {
             String[] params = dateString.split("/");
@@ -65,7 +80,6 @@ public class DBInit {
             int year = Integer.parseInt(params[2]);
             return new LocalDateTime(year, month, day, 0, 0, 0);
         } catch (NumberFormatException e) {
-            // TODO : Cover this in Unit test
             logger.error(e.toString());
             throw new RuntimeException(Errors.UNABLE_TO_PARSE_FILE.getMessage(), e);
         }

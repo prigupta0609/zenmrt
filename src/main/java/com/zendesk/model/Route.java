@@ -4,13 +4,13 @@ import java.util.List;
 
 public class Route {
 
-    private final List<Vertex> route;
+    private final List<Station> route;
 
-    public Route(List<Vertex> route) {
+    public Route(List<Station> route) {
         this.route = route;
     }
 
-    public List<Vertex> getRoute() {
+    public List<Station> getRoute() {
         return route;
     }
 }

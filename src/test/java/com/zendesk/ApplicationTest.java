@@ -1,7 +1,5 @@
 package com.zendesk;
 
-import com.zendesk.common.Errors;
-import com.zendesk.contract.GetRouteResponse;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,39 +25,44 @@ public class ApplicationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-//    @Test
-//    public void testService_isActive() {
-//        Assert.assertEquals("MRT Router is active",this.restTemplate
-//                .getForObject("http://localhost:"+port+"/isActive", String.class));
-//    }
-//
-//    @Test
-//    public void testService_InvalidSation() {
-//        GetRouteResponse response = this.restTemplate
-//                .getForObject("http://localhost:"+port+"/route?from=Holland&to=Bugis", GetRouteResponse.class);
-//        Assert.assertNotNull(response);
-//        Assert.assertNotNull(response.getError());
-//        Assert.assertNull(response.getRoute());
-//        Assert.assertEquals(Errors.STATION_NOT_FOUND.getCode(), response.getError().getCode());
-//    }
-//
-//    @Test
-//    public void testService_InvalidDateFormat() {
-//        GetRouteResponse response = this.restTemplate
-//                .getForObject("http://localhost:"+port+"/route?from=Holland&to=Bugis&date=09/Sep/1990", GetRouteResponse.class);
-//        Assert.assertNotNull(response);
-//        Assert.assertNotNull(response.getError());
-//        Assert.assertNull(response.getRoute());
-//        Assert.assertEquals(Errors.INVALID_DATE_FORMAT.getCode(), response.getError().getCode());
-//    }
+    @Test
+    public void testService_isActive() {
+        Assert.assertEquals("MRT Router is active",this.restTemplate
+                .getForObject("http://localhost:"+port+"/isActive", String.class));
+    }
+
+    @Test
+    public void testService_InvalidSation() {
+        String response = this.restTemplate
+                .getForObject("http://localhost:"+port+"/route?from=Holland&to=Bugis", String.class);
+        String expectedError = "Exception occurred : err_001 -> Origin or destination station do not exist";
+        Assert.assertEquals(expectedError, response);
+    }
+
+    @Test
+    public void testService_InvalidDateFormat() {
+        String response = this.restTemplate
+                .getForObject("http://localhost:"+port+"/route?from=Holland&to=Bugis&date=09/Sep/1990", String.class);
+        String expectedError = "Exception occurred : err_002 -> Invalid date format";
+        Assert.assertEquals(expectedError, response);
+    }
 
     @Test
     public void testService_ValidPath() {
         String response = this.restTemplate
                 .getForObject("http://localhost:"+port+"/route?from=Holland Village&to=Bugis", String.class);
-        System.out.println(response);
-//        Assert.assertNotNull(response);
-//        Assert.assertNull(response.getError());
-//        Assert.assertNotNull(response.getRoute());
+        StringBuilder expectedResult = new StringBuilder("");
+        expectedResult.append("Travel from Holland Village to Bugis\n")
+                .append("Stations travelled : 8\n")
+                .append("Route : ('CC21', 'CC20', 'CC19', 'DT9', 'DT10', 'DT11', 'DT12', 'DT13', 'DT14')\n\n")
+                .append("Take CC line from Holland Village to Farrer Road\n")
+                .append("Take CC line from Farrer Road to Botanic Gardens\n")
+                .append("Change from CC line to DT line\n")
+                .append("Take DT line from Botanic Gardens to Stevens\n")
+                .append("Take DT line from Stevens to Newton\n")
+                .append("Take DT line from Newton to Little India\n")
+                .append("Take DT line from Little India to Rochor\n")
+                .append("Take DT line from Rochor to Bugis\n");
+        Assert.assertEquals(expectedResult.toString(), response);
     }
 }

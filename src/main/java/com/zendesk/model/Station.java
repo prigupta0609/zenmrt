@@ -1,15 +1,14 @@
-package com.zendesk.repository;
+package com.zendesk.model;
 
-import java.util.Date;
-import java.util.List;
+import org.joda.time.LocalDateTime;
 
 public class Station {
 
     private final String name;
-    private final List<String> code;
-    private final Date startDate;
+    private final StationCode code;
+    private final LocalDateTime startDate;
 
-    public Station(String name, List<String> code, Date startDate) {
+    public Station(String name, StationCode code, LocalDateTime startDate) {
         this.name = name;
         this.code = code;
         this.startDate = startDate;
@@ -19,11 +18,11 @@ public class Station {
         return name;
     }
 
-    public List<String> getCode() {
+    public StationCode getCode() {
         return code;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 

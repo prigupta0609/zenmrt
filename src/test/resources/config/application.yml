@@ -1,0 +1,5 @@
+server:
+  port: 8081
+  hostname: http://localhost
+
+dataFilePath: src/test/resources/StationMap.csv

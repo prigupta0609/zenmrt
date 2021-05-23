@@ -1,18 +1,33 @@
 package com.zendesk.contract;
 
-import javax.validation.constraints.NotNull;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.lang.Nullable;
 
 public class GetRouteResponse {
 
-    @NotNull
-    private final List<Route> routes;
+    @JsonProperty("route")
+    @Nullable
+    private Route route;
 
-    public GetRouteResponse(List<Route> routes) {
-        this.routes = routes;
+    @JsonProperty("error")
+    @Nullable
+    private Error error;
+
+    public GetRouteResponse() {}
+
+    public GetRouteResponse(@Nullable Route routes, @Nullable Error error) {
+        this.route = routes;
+        this.error = error;
     }
 
-    public List<Route> getRoutes() {
-        return routes;
+    @JsonProperty("route")
+    public Route getRoute() {
+        return route;
+    }
+
+    @JsonProperty("error")
+    @Nullable
+    public Error getError() {
+        return error;
     }
 }

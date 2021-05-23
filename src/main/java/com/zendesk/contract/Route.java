@@ -1,25 +1,36 @@
 package com.zendesk.contract;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.lang.Nullable;
+
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class Route {
 
-    @NotNull
-    private final int priority;
-    @NotNull
-    private final List<Segment> segmentList;
+    @JsonProperty("requestedOriginDestination")
+    @Nullable
+    private OriginDestination requestedOriginDestination;
 
-    public Route(int priority, List<Segment> segmentList) {
-        this.priority = priority;
+    @JsonProperty("segmentList")
+    @NotNull
+    private List<Segment> segmentList;
+
+    public Route() {}
+
+    public Route(List<Segment> segmentList, OriginDestination requestedOriginDestination) {
         this.segmentList = segmentList;
+        this.requestedOriginDestination = requestedOriginDestination;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
+    @JsonProperty("segmentList")
     public List<Segment> getSegmentList() {
         return segmentList;
+    }
+
+    @JsonProperty("requestedOriginDestination")
+    @Nullable
+    public OriginDestination getRequestedOriginDestination() {
+        return requestedOriginDestination;
     }
 }

@@ -1,5 +1,6 @@
 package com.zendesk.repository;
 
+import com.zendesk.model.Station;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

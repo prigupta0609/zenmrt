@@ -1,12 +1,12 @@
 package com.zendesk.contract;
 
-import java.util.Date;
+import org.joda.time.LocalDateTime;
 
 public class GetRouteRequest {
 
     private String origin;
     private String destination;
-    private Date date;
+    private LocalDateTime date;
 
     // TODO : Improvise object builder logic
     public GetRouteRequest(String origin, String destination) {
@@ -22,11 +22,11 @@ public class GetRouteRequest {
         return destination;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 }

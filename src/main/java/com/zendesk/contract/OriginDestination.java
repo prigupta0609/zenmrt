@@ -1,39 +1,50 @@
 package com.zendesk.contract;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 public class OriginDestination {
 
+    @JsonProperty("originName")
     @NotNull
-    private final String originName;
+    private String originName;
+    @JsonProperty("originCode")
     @NotNull
-    private final List<String> originCode;
+    private String originCode;
+    @JsonProperty("destinationName")
     @NotNull
-    private final String destinationName;
+    private String destinationName;
+    @JsonProperty("destinationCode")
     @NotNull
-    private final List<String> destinationCode;
+    private String destinationCode;
 
-    public OriginDestination(String originName, List<String> originCode, String destinationName, List<String> destinationCode) {
+    public OriginDestination() {}
+
+    public OriginDestination(String originName,
+                             String originCode,
+                             String destinationName,
+                             String destinationCode) {
         this.originName = originName;
         this.originCode = originCode;
         this.destinationName = destinationName;
         this.destinationCode = destinationCode;
     }
 
+    @JsonProperty("originName")
     public String getOriginName() {
         return originName;
     }
-
-    public List<String> getOriginCode() {
-        return originCode;
-    }
-
+    @JsonProperty("destinationName")
     public String getDestinationName() {
         return destinationName;
     }
-
-    public List<String> getDestinationCode() {
+    @JsonProperty("originCode")
+    public String getOriginCode() {
+        return originCode;
+    }
+    @JsonProperty("destinationCode")
+    public String getDestinationCode() {
         return destinationCode;
     }
 }

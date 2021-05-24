@@ -42,7 +42,12 @@ will remain consistent, no matter how many times the same request has been sent.
 2. Java version - 1.8 or above
 3. Framework - spring-boot 2.4.0
 3. Compile and build using **mvn clean install** on zenmrt folder.
-4. Run using **mvn spring-boot:run** on zenmrt folder. The application will start on http://localhost:8080/.
+4. Following are the ways to run the service:
+````
+    (a)Run using **mvn spring-boot:run** on zenmrt folder. 
+    (b)Run using **java -jar target/zenmrt-1.0-SNAPSHOT.jar** on zenmrt folder.
+    (c)Run bash script on zenmrt folder **bash bin/zenmrt**. This command will build and run the service together.
+````
 5. Execute test cases using **mvn test** on zenmrt folder.
 
 ## Sample request url:

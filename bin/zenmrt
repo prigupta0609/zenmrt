@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+cd $DIR/..
+mvn clean install
+echo $DIR
+java -jar target/zenmrt-1.0-SNAPSHOT.jar $1

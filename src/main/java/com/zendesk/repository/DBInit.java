@@ -69,8 +69,6 @@ public class DBInit {
 
     /**
      * Format date string to LocalDateTime
-     * @param dateString
-     * @return
      */
     private LocalDateTime getDate(String dateString) {
         try {

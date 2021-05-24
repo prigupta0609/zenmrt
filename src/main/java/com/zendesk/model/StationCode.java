@@ -9,11 +9,6 @@ public class StationCode {
     @NotNull
     private final String code;
 
-    public StationCode(String line, String code) {
-        this.line = line;
-        this.code = code;
-    }
-
     /**
      * completeStationCode contains line and code collectively
      * for example: NW01
@@ -30,13 +25,5 @@ public class StationCode {
 
     public String getCode() {
         return code;
-    }
-
-    @Override
-    public String toString() {
-        return "StationCode{" +
-                "line='" + line + '\'' +
-                ", code='" + code + '\'' +
-                '}';
     }
 }

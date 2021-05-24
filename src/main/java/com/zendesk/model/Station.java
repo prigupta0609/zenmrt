@@ -25,13 +25,4 @@ public class Station {
     public LocalDateTime getStartDate() {
         return startDate;
     }
-
-    @Override
-    public String toString() {
-        return "Station{" +
-                "name='" + name + '\'' +
-                ", code=" + code +
-                ", startDate=" + startDate +
-                '}';
-    }
 }

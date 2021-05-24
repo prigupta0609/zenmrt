@@ -17,12 +17,4 @@ public class Node {
     public Station getStation() {
         return station;
     }
-
-    @Override
-    public String toString() {
-        return "Node{" + "\n" +
-                "weight=" + weight + "\n" +
-                ", station=" + station + "\n" +
-                '}' + "\n";
-    }
 }

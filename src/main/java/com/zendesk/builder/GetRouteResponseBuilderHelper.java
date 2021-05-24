@@ -90,6 +90,6 @@ public class GetRouteResponseBuilderHelper {
     private static boolean isLineChange (Segment segment) {
         String originName = segment.getOriginDestination().getOriginName();
         String destName = segment.getOriginDestination().getDestinationName();
-        return originName.equals(destName);
+        return originName.equalsIgnoreCase(destName);
     }
 }

@@ -10,7 +10,7 @@ public class Validator {
 
     private static final Logger logger = LoggerFactory.getLogger(Validator.class);
 
-    public static boolean validateDate (String date) throws RouteException {
+    public static void validateDate (String date) throws RouteException {
         try {
             SimpleDateFormat sdfrmt = new SimpleDateFormat(Constants.DATE_FORMAT);
             sdfrmt.parse(date);
@@ -18,6 +18,11 @@ public class Validator {
             logger.error(String.valueOf(ex));
             throw new RouteException(Errors.INVALID_DATE_FORMAT);
         }
-        return false;
+    }
+
+    public static void validateStations(String origin, String destination) throws RouteException {
+        if (origin.equalsIgnoreCase(destination)) {
+            throw new RouteException(Errors.SAME_ORIGIN_DESTINATION);
+        }
     }
 }

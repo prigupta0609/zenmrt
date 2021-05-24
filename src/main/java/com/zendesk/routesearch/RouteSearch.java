@@ -34,14 +34,14 @@ public class RouteSearch {
      */
     public Route getRoute(String origin, String destination, LocalDateTime date) throws RouteException {
         Map<Station, Set<Node>> graph = routeGraph.getGraphWithExistingStations(date);
-        Station originStation = getStationFromStationName(origin, graph);
-        Station destinationStation = getStationFromStationName(destination, graph);
-        if (originStation != null && destinationStation != null) {
-            Route route = getShortestPath(graph, originStation, destinationStation);
+        List<Station> originStations = getStationsFromStationName(origin, graph);
+        List<Station> destStations = getStationsFromStationName(destination, graph);
+        if (originStations.isEmpty() || destStations.isEmpty()) {
+            throw new RouteException(Errors.STATION_NOT_FOUND);
+        } else {
+            Route route = getShortestPath(graph, originStations, destStations);
             logger.info("Route found with " + route.getRoute().size() + " stations");
             return route;
-        } else {
-            throw new RouteException(Errors.STATION_NOT_FOUND);
         }
     }
 
@@ -51,21 +51,21 @@ public class RouteSearch {
      * distance -> store the time taken to reach a station from another station
      * path -> store the path being followed
      * @param graph
-     * @param originStation
-     * @param destinationStation
+     * @param originStations
+     * @param destStations
      * @return
      * @throws RouteException
      */
     private Route getShortestPath(Map<Station, Set<Node>> graph,
-                                  Station originStation,
-                                  Station destinationStation) throws RouteException {
+                                  List<Station> originStations,
+                                  List<Station> destStations) throws RouteException {
         Map<Station, Station> predecessor = new HashMap<>();
         Map<Station, Integer> distance = new HashMap<>();
-        if (isSourceDestConnected(graph, originStation, destinationStation, predecessor, distance) == false) {
+        if (isSourceDestConnected(graph, originStations.get(0), destStations.get(0), predecessor, distance) == false) {
             throw new RouteException(Errors.ORIGIN_DESTINATION_NOT_CONNECTED);
         }
         LinkedList<Station> path = new LinkedList<>();
-        Station crawl = destinationStation;
+        Station crawl = getValidDestStation(destStations, predecessor);
         path.add(crawl);
         while (predecessor.get(crawl) != null) {
             path.add(predecessor.get(crawl));
@@ -108,9 +108,9 @@ public class RouteSearch {
             Set<Node> neighbors = graph.get(currentStation);
             for (Node neighbor : neighbors) {
                 Station neighborStation = neighbor.getStation();
-                System.out.println("neighborStation -> " + neighborStation.getName());
                 if (visited.get(neighborStation) == false) {
                     visited.put(neighborStation, true);
+                    // if the station name is same then it wouldn't be counted in number of different stations
                     if (neighborStation.getName() != currentStation.getName())
                         distance.put(neighborStation, distance.get(currentStation) + 1);
                     else
@@ -127,8 +127,13 @@ public class RouteSearch {
         return false;
     }
 
-    // Reverse travel the station list will give the path from origin to destination
-    private Route getRouteFromStationNames(List<Station> stationList) {
+    /*
+     * Reverse travel the station list will give the path from origin to destination
+     */
+    private Route getRouteFromStationNames(List<Station> stationList) throws RouteException {
+        if (stationList.size() <= 1) {
+            throw new RouteException(Errors.ISSUE_FETCHING_RESULTS);
+        }
         List<Station> path = new ArrayList<>();
         for (int i=stationList.size()-1; i>=0; i--) {
             path.add(stationList.get(i));
@@ -137,12 +142,29 @@ public class RouteSearch {
         return route;
     }
 
-    private Station getStationFromStationName (String stationName, Map<Station, Set<Node>> graph) {
+    /*
+     * Fetch all the stations having same name but different station codes.
+     */
+    private List<Station> getStationsFromStationName(String stationName, Map<Station, Set<Node>> graph) {
+        List<Station> stations = new ArrayList<>();
         Set<Station> keySet = graph.keySet();
         for (Station s : keySet) {
             if (s.getName().equalsIgnoreCase(stationName))
-                return s;
+                stations.add(s);
         }
-        return null;
+        return stations;
+    }
+
+    /**
+     * There are multiple stations with same name but different station codes.
+     * Extract the destination station which form the part of shortest route.
+     */
+    private Station getValidDestStation(List<Station> destStations, Map<Station, Station> predecessor) {
+        Station crawl = null;
+        for (Station dest : destStations) {
+            crawl = dest;
+            if (predecessor.get(crawl) != null) break;
+        }
+        return crawl;
     }
 }
